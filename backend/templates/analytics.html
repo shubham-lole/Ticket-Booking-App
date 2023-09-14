@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffe0e0;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+            color: #333;
+            border: 1px solid;
+            border-radius: 5%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #000000;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #000000;
+            border-right: 1px solid black;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        ul li {
+            margin-bottom: 5px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .col img {
+            max-width: 60%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1>Analytics Report</h1>
+                <p> Your activity for the last month</p>
+                <table>
+                    <tr>
+                        <th>Username : </th>
+                        <td>{{ data.user }}</td>
+                    </tr>
+                    <tr>
+                        <th>Total Tickets Booked : </th>
+                        <td>{{ data.total_tickets }}</td>
+                    </tr>
+                    <tr>
+                        <th>Total Booking Amount : </th>
+                        <td>{{ data.total_amount }}</td>
+                    </tr>
+                </table>
+                <h2>Shows visited</h2>
+                <ul>
+                    {% for show in data.show_names %}
+                    <li>{{ show }}</li>
+                    {% endfor %}
+                </ul>
+                <h2>Theaters visited</h2>
+                <ul>
+                    {% for theater in data.theater_names %}
+                    <li>{{ theater }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col">
+                <div class="row">
+                <img src="/static/plots/{{data.user}}/num_shows_vs_num_theaters.png">
+                </div>
+                <div class="row">
+                <img src="/static/plots/{{data.user}}/total_tickets_vs_total_amount.png">
+                    </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

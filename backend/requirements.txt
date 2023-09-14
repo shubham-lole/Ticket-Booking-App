@@ -1,0 +1,14 @@
+flask
+sqlalchemy
+flask-sqlalchemy
+flask-cors
+flask-restful
+flask_jwt_extended
+celery
+flask_mail
+flask_caching
+matplotlib
+passlib
+redis
+pandas
+bcrypt

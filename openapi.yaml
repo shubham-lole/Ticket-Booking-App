@@ -1,0 +1,430 @@
+openapi: 3.0.0
+info:
+  title: Ticket Booking v2 API
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000
+    description: Local development server
+paths:
+  /api/login/user:
+    post:
+      summary: User Login
+      tags:
+        - Authentication
+      requestBody:
+        description: User login credentials
+        required: true
+        content:
+          application/formdata:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+        '400':
+          description: Missing username or password
+        '401':
+          description: Invalid credentials
+  /api/login/admin:
+    post:
+      summary: Admin Login
+      tags:
+        - Authentication
+      requestBody:
+        description: Admin login credentials
+        required: true
+        content:
+          application/formdata:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+        '400':
+          description: Missing username or password
+        '401':
+          description: Invalid credentials
+        '403':
+          description: User is not an admin
+  /api/register/user:
+    post:
+      summary: User Registration
+      tags:
+        - User Management
+      requestBody:
+        description: User registration data
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                email:
+                  type: string
+      responses:
+        '200':
+          description: User created successfully
+        '400':
+          description: Missing username or password
+        '409':
+          description: User already exists
+  /api/admin/theater:
+    post:
+      summary: Create a New Theater
+      tags:
+        - Theater Management
+      security:
+        - jwt: [ token ]
+      requestBody:
+        description: Theater data
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                place:
+                  type: string
+                capacity:
+                  type: integer
+      responses:
+        '201':
+          description: Theater added successfully
+        '400':
+          description: Please provide all required data
+        '401':
+          description: Unauthorized
+        '500':
+          description: Failed to add the theater
+  /api/admin/theater/{theater_id}:
+    put:
+      summary: Edit a Theater
+      tags:
+        - Theater Management
+      security:
+        - jwt: []
+      parameters:
+        - in: path
+          name: theater_id
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: theater_data
+          required: true
+          description: Theater data to be updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  theaterName:
+                    type: string
+                  capacity:
+                    type: integer
+      responses:
+        '200':
+          description: Theater updated successfully
+        '400':
+          description: Please provide all required data
+        '401':
+          description: Unauthorized
+        '404':
+          description: Theater not found
+        '500':
+          description: Failed to update the theater
+    delete:
+      summary: Delete a Theater
+      tags:
+        - Theater Management
+      security:
+        - jwt: []
+      parameters:
+        - in: path
+          name: theater_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Theater deleted successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Theater not found
+        '500':
+          description: Failed to delete the theater
+  /api/admin/show:
+    post:
+      summary: Create a New Show 
+      tags:
+        - Show Management
+      security:
+        - jwt: []
+      requestBody:
+        description: Show data
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                ratings:
+                  type: string
+                tags:
+                  type: string
+                ticket_price:
+                  type: number
+                theaters:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      theater_id:
+                        type: integer
+                      timing:
+                        type: string
+                        format: date-time
+      responses:
+        '201':
+          description: Show added to theaters successfully
+        '400':
+          description: Please provide all required data
+        '401':
+          description: Unauthorized
+        '409':
+          description: Show timing conflicts with an existing show timing
+        '500':
+          description: Failed to add the show to theaters
+  /api/admin/show/{show_id}:
+    put:
+      summary: Edit a Show
+      tags:
+        - Show Management
+      security:
+        - jwt: []
+      parameters:
+        - in: path
+          name: show_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '400':
+          description: Please provide all required data
+        '404':
+          description: Show not found
+        '200':
+          description: Show successfully edited
+        '500':
+          description: Failed to update show
+        
+    delete:
+      summary: Delete a Show
+      tags:
+        - Show Management
+      security:
+        - jwt: []
+      parameters:
+        - in: path
+          name: show_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '404':
+          description: Show not found
+        '200':
+          description: Show successfully deleted
+        '500':
+          description: Failed to delete show
+        
+      # ... (existing parameters, responses, etc.)
+  /api/booking:
+    post:
+      summary: Create Booking
+      tags:
+        - Booking Management
+      security:
+        - jwt: []
+      requestBody:
+        description: User registration data
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: string
+                show_timing_id:
+                  type: integer
+                num_tickets:
+                  type: integer
+                theater_id:
+                  type: integer
+      responses:
+        '400':
+          description: Please provide all data, Not enough seats available
+        '404':
+          description: Invalid show timing id
+        '201':
+          description: Booking created successfully
+    get:
+      summary: Get Bookings
+      tags:
+        - Booking Management
+      security:
+        - jwt: []
+      parameters:
+        - in: query
+          name: user
+          schema:
+            type: string
+      responses:
+        '400': 
+          description: user required
+        '404':
+          description: no bookings found for given user
+        '200':
+          description: Bookings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  BookingID:
+                    type: integer
+                  ShowName:
+                    type: string
+                  ShowDate:
+                    type: string
+                  ShowTiming:
+                    type: string
+                  TheaterName:
+                    type: string
+                  NumTickets:
+                    type: integer
+                  BookingDate:
+                    type: string
+  /api/theater/search:
+    get:
+      summary: Search Theaters
+      tags:
+        - Theater Management
+      parameters:
+        - in: query
+          name: location
+          schema:
+           type: string
+      responses:
+        '400':
+          description: location required
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  TheaterID:
+                    type: integer
+                  Name:
+                    type: string
+                  Place:
+                    type: string
+                  Capacity:
+                    type: integer
+            
+      # ... (existing parameters, responses, etc.)
+  /api/show/search:
+    get:
+      summary: Search Shows
+      tags:
+        - Show Management
+      parameters:
+        - in: query
+          name: tags
+          schema:
+           type: string
+      responses:
+        '400':
+          description: tags required
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ShowID:
+                    type: integer
+                  Name:
+                    type: string
+                  Rating:
+                    type: string
+                  Tags:
+                    type: string
+                  TicketPrice:
+                    type: integer
+      # ... (existing parameters, responses, etc.)
+  /api/export/{theater_id}:
+    get:
+      summary: Export Theater Data
+      tags:
+        - Theater Management
+      security:
+        - jwt: []
+      parameters:
+        - in: path
+          name: theater_id
+          required: true
+          schema:
+           type: integer
+      responses:
+        '200':
+          description: Theaters Data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                 theaters_data:
+                  type: string
+      
+
+
+
+    
