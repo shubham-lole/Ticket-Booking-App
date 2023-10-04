@@ -16,9 +16,9 @@ class Config:
     MAIL_PORT = 587
     MAIL_USE_SSL = False
     MAIL_USE_TLS = True
-    MAIL_USERNAME = "shubhamlole2@gmail.com"
-    MAIL_PASSWORD = "bqrtqwtwibhjdugy"
-    MAIL_DEFAULT_SENDER = "shubhamlole2@gmail.com"
+    MAIL_USERNAME = ""
+    MAIL_PASSWORD = ""
+    MAIL_DEFAULT_SENDER = ""
     CACHE_TYPE = "RedisCache"
     CACHE_REDIS_HOST = "localhost"
     CACHE_REDIS_PORT = 6379
